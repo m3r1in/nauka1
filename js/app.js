@@ -10,7 +10,8 @@ import {
 } from './logic.js';
 
 const KEY = 'bcm-studio.v1';
-const inFrame = (() => { try { return window.self !== window.top; } catch { return true; } })();
+// W osadzonym podglądzie pobieranie i drukowanie są zablokowane – eksport idzie przez okno do skopiowania.
+const inFrame = window.BCM_EMBED === true || (() => { try { return window.self !== window.top; } catch { return true; } })();
 let S = load() || sampleState();
 persist();
 
