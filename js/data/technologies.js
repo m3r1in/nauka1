@@ -320,4 +320,28 @@ export const TECHNOLOGIES = [
   },
 ];
 
+TECHNOLOGIES.push({
+  id: 'pos', name: 'Kasy POS i terminale płatnicze (sklep)', cat: 'Handel',
+  steps: {
+    isolate: [
+      ['Odetnij sklep od sieci centrali (reguła na routerze / SD-WAN), pozostaw łącze terminali płatniczych, jeśli nie jest objęte incydentem', '', 'Kasy bez połączenia z centralą, terminale autoryzują transakcje'],
+      ['Przełącz kasy w tryb offline zgodnie z dokumentacją producenta systemu kasowego', '', 'Sprzedaż możliwa bez połączenia z centralą'],
+      ['Nie restartuj i nie formatuj kas z objawami szyfrowania – oznacz je i odłóż do analizy', '', ''],
+    ],
+    evidence: [
+      ['Sfotografuj ekran z notatką okupu i zapisz godzinę oraz numer kasy', '', 'Zdjęcie w zgłoszeniu incydentu'],
+      ['Zabezpiecz dysk zainfekowanej kasy (wymontowanie lub obraz) przed ponowną instalacją', '', 'Nośnik z kartą dowodu i sumą SHA-256'],
+    ],
+    restore: [
+      ['Zainstaluj kasę ze sprawdzonego złotego obrazu z czystego repozytorium', '', 'Kasa uruchomiona z obrazu o znanej sumie kontrolnej'],
+      ['Załaduj bazę towarową i cennik z odtworzonego, zweryfikowanego systemu centralnego', '', 'Ceny zgodne z cennikiem wzorcowym'],
+      ['Przyłącz sklep do sieci po potwierdzeniu przez SOC, że segment sklepów jest czysty', '', ''],
+    ],
+    verify: [
+      ['Wykonaj transakcję testową gotówkową i kartową oraz zwrot', '', 'Paragon fiskalny i potwierdzenie autoryzacji'],
+      ['Prześlij do centrali dane sprzedaży z trybu offline i uzgodnij raporty dobowe', '', 'Brak rozbieżności w raportach'],
+    ],
+  },
+});
+
 export const TECH_BY_ID = Object.fromEntries(TECHNOLOGIES.map(t => [t.id, t]));

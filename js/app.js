@@ -76,7 +76,14 @@ const layerDot = l => `<span class="layer ${l}" title="Warstwa ${h(LAYERS[l]?.na
 const typeBadge = t => `<span class="type" title="${DOC_TYPES[t].name}">${DOC_TYPES[t].short}</span>`;
 const page = (eyebrow, title, actions, body) => `<div class="wrap"><div class="head"><div><span class="eyebrow">${eyebrow}</span><h1>${h(title)}</h1></div>${actions ? `<div class="row">${actions}</div>` : ''}</div>${body}</div>`;
 const del = (what, id, label = 'Usuń') => `<button class="btn danger sm" data-act="del" data-what="${what}" data-id="${h(id)}">${label}</button>`;
-const sampleBanner = () => S.sample ? `<div class="banner noprint"><span><b>Dane przykładowe.</b> Pokazują działanie aplikacji na fikcyjnej spółce.</span><button class="btn sm" data-act="reset">Wyczyść i zacznij od zera</button></div>` : '';
+const sampleBanner = () => S.sample
+  ? `<div class="banner noprint"><span><b>Dane przykładowe.</b> Pokazują działanie aplikacji na fikcyjnej spółce.</span><button class="btn sm" data-act="reset">Wyczyść i zacznij od zera</button></div>`
+  : S.banner ? `<div class="banner noprint"><span>${h(S.banner)}</span><a class="btn sm" href="#/settings">Kontekst i założenia</a></div>` : '';
+
+// Projekty przygotowane w repozytorium (pliki JSON w katalogu examples/).
+const PROJECTS = [
+  { file: 'examples/rossmann-ransomware.json', name: 'Rossmann Polska – plan na wypadek ataku ransomware', note: 'Projekt na podstawie źródeł publicznych (OSINT) z założeniami do weryfikacji' },
+];
 
 let toastT;
 function toast(msg) {
@@ -574,6 +581,7 @@ function settingsView() {
     `<section class="card"><h2>Organizacja</h2><div class="form">
       ${fld('Nazwa', inp('org', 'o', 'name', S.org.name, 'text', 'data-r'))}
       ${fld('Sektor', inp('org', 'o', 'sector', S.org.sector))}
+      ${fld('Kontekst organizacji i założenia', area('org', 'o', 'notes', S.org.notes, 'style="min-height:160px"'), 'Źródła, fakty i założenia przyjęte przy budowie planów.', true)}
     </div></section>
     <section class="card"><h2>Ramy odniesienia</h2><p class="small muted" style="margin-top:-6px">Wybrane standardy i akty prawne sterują mapowaniem wymagań, oceną zgodności i obowiązkami raportowymi w planach.</p>
       <h3>Akty prawne</h3>${checks('org', 'o', 'frameworks', S.org.frameworks, FRAMEWORKS.filter(f => f.kind === 'law').map(f => [f.id, f.name, f.title]))}
@@ -586,6 +594,8 @@ function settingsView() {
       <div class="row"><input type="file" id="imp-file" accept="application/json,.json" aria-label="Plik JSON"></div>
       <textarea id="imp-text" placeholder="…lub wklej tutaj zawartość pliku JSON" style="min-height:80px" class="code"></textarea>
       <div class="row"><button class="btn" data-act="import">Importuj (zastąpi obecne dane)</button></div>
+      ${window.BCM_EMBED ? '' : `<h3>Gotowe projekty</h3>
+      <div class="items">${PROJECTS.map((p, i) => `<button class="item" style="text-align:left;border:0;width:100%;background:none;cursor:pointer" data-act="load-project" data-i="${i}"><span class="grow"><span class="t">${h(p.name)}</span><span class="meta">${h(p.note)}</span></span><span class="pill acc">Wczytaj</span></button>`).join('')}</div>`}
       <h3>Zresetuj</h3>
       <div class="row"><button class="btn" data-act="load-sample">Wczytaj dane przykładowe</button><button class="btn danger" data-act="reset">Usuń wszystkie dane</button></div>
     </section>
@@ -785,6 +795,14 @@ const ACTIONS = {
       S = { ...emptyState(), ...data }; persist(); toast('Zaimportowano dane'); location.hash = '#/';
       render();
     } catch { toast('Nie udało się odczytać pliku – to musi być eksport JSON z BCM Studio'); }
+  },
+  async 'load-project'(el) {
+    const p = PROJECTS[+el.dataset.i];
+    try {
+      const r = await fetch(p.file, { cache: 'no-cache' });
+      if (!r.ok) throw new Error(r.status);
+      S = { ...emptyState(), ...(await r.json()) }; persist(); toast(`Wczytano: ${p.name}`); location.hash = '#/'; render();
+    } catch { toast('Nie udało się pobrać projektu – sprawdź połączenie lub zaimportuj plik JSON ręcznie'); }
   },
   'load-sample'() { S = sampleState(); persist(); toast('Wczytano dane przykładowe'); location.hash = '#/'; render(); },
   reset(el) {

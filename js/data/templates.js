@@ -82,7 +82,7 @@ export const TEMPLATES = [
   },
   {
     id: 'plan-irp', type: 'plan', layer: 'both', name: 'Plan reagowania na incydenty (IRP)',
-    reqs: ['iso27001:A.5.24', 'iso27001:A.5.26', 'iso27001:A.5.28', 'iso27035:PLAN', 'iso27035:RESPOND', 'nist61:RS.MA', 'nist61:RS.AN', 'nist61:RS.MI', 'nis2:art. 21(2)(b)', 'nis2:art. 23', 'dora:art. 17', 'dora:art. 18', 'ksc:KSC-OBS'],
+    reqs: ['iso27001:A.5.24', 'iso27001:A.5.26', 'iso27001:A.5.28', 'iso27035:PLAN', 'iso27035:RESPOND', 'nist61:RS.MA', 'nist61:RS.AN', 'nist61:RS.MI', 'nis2:art. 21(2)(b)', 'nis2:art. 23', 'dora:art. 17', 'dora:art. 18', 'ksc:KSC-OBS', 'pci:12.10.1', 'pci:12.10.3', 'pci:12.10.6'],
     sections: [
       ['Zakres', 'Plan opisuje obsługę incydentów bezpieczeństwa w {{org}} od wykrycia do zamknięcia i przeglądu.', ''],
       ['Klasyfikacja i priorytety', '| Priorytet | Kryteria | Czas reakcji |\n|---|---|---|\n| P1 krytyczny | zatrzymanie procesu krytycznego, wyciek danych wrażliwych, ransomware, możliwy incydent poważny | 15 min, 24/7 |\n| P2 wysoki | degradacja procesu krytycznego, przejęcie konta uprzywilejowanego | 1 h |\n| P3 średni | incydent ograniczony do jednego systemu niekrytycznego | 4 h robocze |\n| P4 niski | zdarzenie bez wpływu | 2 dni robocze |', ''],
@@ -184,7 +184,7 @@ export const TEMPLATES = [
   },
   {
     id: 'proc-testing', type: 'procedure', layer: 'both', name: 'Procedura testowania i ćwiczeń',
-    reqs: ['iso22301:8.5', 'iso22301:8.6', 'nist34:6', 'iso27031:IRBC-4', 'nis2:art. 21(2)(f)', 'dora:art. 11(6)', 'dora:art. 24', 'rodo:art. 32(1)(d)'],
+    reqs: ['iso22301:8.5', 'iso22301:8.6', 'nist34:6', 'iso27031:IRBC-4', 'nis2:art. 21(2)(f)', 'dora:art. 11(6)', 'dora:art. 24', 'rodo:art. 32(1)(d)', 'pci:12.10.2', 'pci:12.10.4'],
     sections: [
       ['Program testów', '| Rodzaj | Częstotliwość | Zakres |\n|---|---|---|\n| Przegląd dokumentacji | 2× w roku | wszystkie plany |\n| Ćwiczenie sztabowe (tabletop) | raz w roku | zespół kryzysowy, IRP |\n| Test odtworzenia z kopii | raz na kwartał | systemy krytyczne |\n| Test przełączenia | raz w roku | DRP |', ''],
     ],
@@ -244,5 +244,112 @@ export const TEMPLATES = [
     ],
   },
 ];
+
+// ───────── Ransomware i handel detaliczny ─────────
+TEMPLATES.push(
+  {
+    id: 'proc-ransomware', type: 'procedure', layer: 'both', name: 'Playbook: atak ransomware',
+    reqs: ['iso27001:A.5.26', 'iso27001:A.5.28', 'iso27035:RESPOND', 'nist61:RS.MA', 'nist61:RS.AN', 'nist61:RS.MI', 'nist61:RC.RP', 'pci:12.10.1', 'pci:12.10.5', 'nis2:art. 21(2)(b)', 'ksc:KSC-OBS'],
+    sections: [
+      ['Cel i zakres', 'Playbook opisuje reakcję {{org}} na atak ransomware: szyfrowanie systemów, kradzież danych z groźbą publikacji (podwójne wymuszenie) lub oba zdarzenia naraz.', ''],
+      ['Objawy i wskaźniki', '- Pliki ze zmienionym rozszerzeniem i notatka z żądaniem okupu.\n- Masowe usuwanie kopii migawkowych (np. `vssadmin delete shadows`), wyłączanie agentów EDR i kopii zapasowych.\n- Nietypowe logowania kont uprzywilejowanych, nowe konta administracyjne, zmiany GPO.\n- Duży ruch wychodzący, narzędzia synchronizacji z chmurą (np. rclone) – możliwa eksfiltracja.\n- Zgłoszenia ze sklepów lub magazynów o masowej niedostępności systemów.', ''],
+      ['Zasady', '- Nie wyłączaj zasilania zainfekowanych serwerów bez decyzji zespołu IR – utracisz dowody z pamięci.\n- Komunikuj się kanałem pozapasmowym: zakładaj, że poczta i komunikator mogą być czytane przez atakujących.\n- Nie kontaktuj się z przestępcami bez decyzji Zarządu (procedura decyzyjna).\n- Nie przywracaj systemów do sieci, z której nie usunięto atakującego.\n- Każda decyzja ma godzinę i autora w dzienniku incydentu.', ''],
+      ['Terminy raportowe', '{{reporting}}', ''],
+      ['Checklisty i instrukcje', '{{children}}', ''],
+    ],
+    steps: [
+      ['SOC', 'Potwierdź objawy, zarejestruj incydent jako P1 i zapisz czas wykrycia.', 'Numer incydentu i czas wykrycia', '1 · 0–15 min · Wykrycie'],
+      ['SOC', 'Powiadom kierownika incydentu i CISO telefonicznie lub kanałem pozapasmowym.', 'Potwierdzenie odbioru', '1 · 0–15 min · Wykrycie'],
+      ['Kierownik incydentu', 'Uruchom zegar raportowy i zwołaj zespół kryzysowy (cel: 30 min).', 'Zespół zebrany', '1 · 0–15 min · Wykrycie'],
+      ['SOC / NOC', 'Odizoluj zainfekowane hosty w EDR i zablokuj ruch między strefami (sklepy, centrala, magazyny) według checklisty izolacji.', 'Rozprzestrzenianie zatrzymane', '2 · 15 min–2 h · Ograniczenie'],
+      ['Administrator tożsamości', 'Wyłącz przejęte konta, ogranicz konta uprzywilejowane do zespołu IR, rozważ wstrzymanie synchronizacji z chmurą.', '', '2 · 15 min–2 h · Ograniczenie'],
+      ['Administrator kopii', 'Odetnij repozytoria kopii od sieci produkcyjnej, zmień poświadczenia konsoli i potwierdź stan kopii niezmiennych.', 'Kopie niezmienne nienaruszone', '2 · 15 min–2 h · Ograniczenie'],
+      ['Zespół IR', 'Zabezpiecz dowody: pamięć, logi, notatkę okupu, próbkę złośliwego oprogramowania.', 'Karty dowodów z sumami SHA-256', '2 · 15 min–2 h · Ograniczenie'],
+      ['Kierownik incydentu', 'Zdecyduj o odcięciu internetu lub VPN dla stref objętych incydentem i zapisz decyzję.', 'Decyzja z godziną', '2 · 15 min–2 h · Ograniczenie'],
+      ['Zespół IR', 'Ustal zakres: wektor wejścia, przejęte konta, zaszyfrowane systemy, ślady eksfiltracji, najwcześniejszy ślad atakującego.', 'Wstępny raport zakresu', '3 · 2–24 h · Ocena i decyzje'],
+      ['IOD', 'Oceń naruszenie ochrony danych osobowych (klienci, pracownicy) według checklisty RODO.', 'Decyzja o zgłoszeniu do UODO', '3 · 2–24 h · Ocena i decyzje'],
+      ['Zespół kryzysowy', 'Uruchom tryb awaryjny procesów: sprzedaż w sklepach offline, dostawy awaryjne, komunikacja z klientami.', '', '3 · 2–24 h · Ocena i decyzje'],
+      ['Compliance', 'Przygotuj zgłoszenia w terminach; powiadom ubezpieczyciela cyber, agenta rozliczeniowego (PCI DSS) i policję (CBZC).', 'Potwierdzenia wysłania', '3 · 2–24 h · Ocena i decyzje'],
+      ['Zarząd', 'Rozstrzygnij kwestię żądania okupu zgodnie z procedurą decyzyjną.', 'Uchwała lub notatka decyzyjna', '3 · 2–24 h · Ocena i decyzje'],
+      ['Zespół IR', 'Usuń mechanizmy utrzymania dostępu (konta, zadania, GPO), zresetuj KRBTGT dwukrotnie, zmień hasła i sekrety.', '', '4 · Usunięcie i odtworzenie'],
+      ['Kierownik DR', 'Odtwarzaj w czystym środowisku: tożsamość → sieć i zapory → bazy danych → ERP/WMS → kasy → e-commerce.', 'Usługi odtworzone w kolejności', '4 · Usunięcie i odtworzenie'],
+      ['Właściciele procesów', 'Zaakceptuj działanie usług i uzgodnij dane z trybu awaryjnego.', 'Akceptacja z godziną', '4 · Usunięcie i odtworzenie'],
+      ['Kierownik incydentu', 'Utrzymaj wzmożony monitoring przez 30 dni, przygotuj raport końcowy i przegląd poincydentalny.', '', '5 · Po incydencie'],
+    ],
+  },
+  {
+    id: 'proc-ransom-decision', type: 'procedure', layer: 'biz', name: 'Procedura decyzyjna – żądanie okupu',
+    reqs: ['iso22301:8.4.2', 'nist61:RS.MA'],
+    sections: [
+      ['Zasada', '{{org}} domyślnie nie płaci okupu. Odstępstwo może zatwierdzić wyłącznie Zarząd, po analizie prawnej i bez naruszenia sankcji.', ''],
+      ['Kryteria oceny', '| Kryterium | Pytanie |\n|---|---|\n| Odtworzenie | Czy odtworzymy procesy krytyczne z kopii w czasie MTPD? |\n| Ludzie | Czy zagrożone jest życie lub zdrowie? |\n| Sankcje | Czy odbiorca lub portfel znajduje się na listach sankcyjnych (UE, ONZ, OFAC)? |\n| Organy | Jakie jest stanowisko policji (CBZC)? |\n| Ubezpieczenie | Co mówi polisa cyber i ubezpieczyciel? |\n| Skuteczność | Brak gwarancji odszyfrowania i usunięcia danych; ryzyko ponownego ataku. |', ''],
+    ],
+    steps: [
+      ['Kierownik incydentu', 'Przedstaw Zarządowi stan odtworzenia z kopii i szacowany czas powrotu procesów krytycznych.', ''],
+      ['Dział prawny', 'Sprawdź listy sankcyjne i obowiązki prawne; przygotuj opinię.', 'Opinia na piśmie'],
+      ['Compliance', 'Zgłoś przestępstwo policji (CBZC) i poinformuj ubezpieczyciela.', 'Numer sprawy'],
+      ['Zarząd', 'Podejmij i udokumentuj decyzję z uzasadnieniem.', 'Uchwała'],
+      ['Kierownik incydentu', 'Kontakt z przestępcami prowadzi wyłącznie wyznaczony negocjator, wszystkie wiadomości są archiwizowane.', ''],
+    ],
+  },
+  {
+    id: 'proc-clean-rebuild', type: 'procedure', layer: 'tech', name: 'Procedura odtworzenia po ransomware (czyste środowisko)',
+    reqs: ['iso27001:A.8.13', 'iso27031:IRBC-3', 'nist61:RC.RP', 'dora:art. 12', 'rodo:art. 32(1)(c)', 'nist34:5'],
+    sections: [
+      ['Cel', 'Odtworzenie usług bez ryzyka ponownego zaszyfrowania: z czystych kopii, w odizolowanym środowisku, z nowymi poświadczeniami.', ''],
+      ['Kolejność odtwarzania', '{{table:order}}', ''],
+      ['Instrukcje', '{{children}}', ''],
+    ],
+    steps: [
+      ['Kierownik DR', 'Zbuduj izolowane środowisko odtworzeniowe (osobna sieć, nowe stacje administracyjne PAW).', 'Środowisko bez połączenia z siecią produkcyjną'],
+      ['Zespół IR', 'Wskaż punkt odtworzenia sprzed najwcześniejszego śladu atakującego.', 'Punkt zatwierdzony przez kierownika incydentu'],
+      ['Administrator kopii', 'Przeskanuj kopie (antywirus, wskaźniki IoC z incydentu) przed odtworzeniem.', 'Brak wykryć'],
+      ['Administratorzy', 'Odtwórz tożsamość (AD/Entra) jako pierwszą, potem sieć, bazy danych i aplikacje.', ''],
+      ['Zespół IR', 'Usuń podatność użytą do wejścia i wymuś zmianę wszystkich haseł i kluczy.', ''],
+      ['Kierownik DR', 'Przyłączaj strefy do sieci etapami, pod wzmożonym monitoringiem SOC.', 'Brak nowych alertów przez 24 h'],
+    ],
+  },
+  {
+    id: 'proc-store-offline', type: 'procedure', layer: 'biz', name: 'Procedura pracy placówek przy niedostępności systemów centralnych',
+    reqs: ['iso22301:8.4.4', 'iso27001:A.5.29'],
+    sections: [
+      ['Cel', 'Utrzymanie sprzedaży w placówkach {{org}}, gdy systemy centralne są niedostępne lub odcięte z powodu incydentu.', ''],
+      ['Kryteria zamknięcia placówki', '- Brak możliwości wystawiania paragonów fiskalnych.\n- Zagrożenie bezpieczeństwa ludzi.\n- Polecenie kierownika regionu lub zespołu kryzysowego.', ''],
+      ['Checklisty', '{{children}}', ''],
+    ],
+    steps: [
+      ['Kierownik regionu', 'Przekaż placówkom polecenie przejścia w tryb awaryjny (SMS / telefon).', 'Potwierdzenia od placówek'],
+      ['Kierownik placówki', 'Sprawdź, czy kasy działają offline i czy terminale autoryzują płatności.', ''],
+      ['Kierownik placówki', 'Gdy terminale nie działają – przyjmuj tylko gotówkę i oznacz to przy wejściu.', ''],
+      ['Kierownik placówki', 'Wstrzymaj zwroty, rabaty programu lojalnościowego i karty podarunkowe do odwołania.', ''],
+      ['Kierownik placówki', 'Prowadź papierowy rejestr zdarzeń i braków towaru; raportuj co 4 h.', ''],
+    ],
+  },
+  {
+    id: 'proc-dc-manual', type: 'procedure', layer: 'both', name: 'Procedura awaryjnej obsługi centrum dystrybucyjnego',
+    reqs: ['iso22301:8.4.4', 'iso22301:8.3'],
+    sections: [
+      ['Cel', 'Utrzymanie minimalnych dostaw do placówek, gdy system magazynowy (WMS) lub automatyka są niedostępne.', ''],
+      ['Priorytety', 'Dostawy uzupełniające produktów o najwyższej rotacji i pierwszej potrzeby dla placówek z najniższym zapasem.', ''],
+      ['Checklisty', '{{children}}', ''],
+    ],
+    steps: [
+      ['Kierownik CD', 'Zatrzymaj automatykę w stanie bezpiecznym i zabezpiecz strefy pracy.', ''],
+      ['Planowanie dostaw', 'Wygeneruj z ostatniej czystej kopii lub kopii offline listę priorytetowych pozycji i lokalizacji.', 'Lista kompletacyjna na papierze'],
+      ['Kierownik zmiany', 'Kompletuj ręcznie według list papierowych, z kontrolą drugiej osoby.', ''],
+      ['Transport', 'Ustal awaryjny harmonogram ramp i kursów telefonicznie z przewoźnikami.', ''],
+      ['Kierownik CD', 'Po odtworzeniu WMS zaksięguj ruchy z trybu awaryjnego i wykonaj inwentaryzację kontrolną.', 'Stany zgodne'],
+    ],
+  },
+  {
+    id: 'ins-checklist', type: 'instruction', layer: 'both', name: 'Checklista',
+    reqs: [],
+    sections: [
+      ['Kiedy używać', '', ''],
+      ['Lista kontrolna', '{{steps}}', 'Odhaczaj punkty w trakcie testu lub incydentu (moduł Testy → wykonanie).'],
+      ['Po zakończeniu', 'Przekaż wypełnioną checklistę kierownikowi incydentu – jest częścią dokumentacji incydentu.', ''],
+    ],
+  },
+);
 
 export const TEMPLATE_BY_ID = Object.fromEntries(TEMPLATES.map(t => [t.id, t]));

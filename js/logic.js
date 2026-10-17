@@ -80,7 +80,8 @@ export function gaps(s) {
     for (const { p, direct } of req.via) {
       if (p.rto != null && p.rto !== '' && sys.rtoCap != null && sys.rtoCap !== '' && +sys.rtoCap > +p.rto)
         out.push({ kind: 'RTO', process: p, system: sys, need: +p.rto, have: +sys.rtoCap, direct });
-      if (p.rpo != null && p.rpo !== '' && sys.rpoCap != null && sys.rpoCap !== '' && +sys.rpoCap > +p.rpo)
+      // RPO dotyczy danych samego systemu, więc porównujemy je tylko przy bezpośrednim powiązaniu procesu z systemem.
+      if (direct && p.rpo != null && p.rpo !== '' && sys.rpoCap != null && sys.rpoCap !== '' && +sys.rpoCap > +p.rpo)
         out.push({ kind: 'RPO', process: p, system: sys, need: +p.rpo, have: +sys.rpoCap, direct });
     }
   }
@@ -184,7 +185,7 @@ export function createDoc(s, templateId, opts = {}) {
     reqs: [...t.reqs], processes: opts.processes || [], systems: opts.systems || [],
     tech: opts.tech || null, scenarios: opts.scenarios || [],
     sections: t.sections.map(([title, content, hint]) => ({ id: uid(), title, content, hint })),
-    steps: (t.steps || []).map(([who, action, expected]) => ({ id: uid(), group: '', who, action, cmd: '', expected: expected || '' })),
+    steps: (t.steps || []).map(([who, action, expected, group]) => ({ id: uid(), group: group || '', who, action, cmd: '', expected: expected || '' })),
     updated: new Date().toISOString(),
   };
   if (opts.tech) doc.steps = stepsFromTech(opts.tech, opts.scenarios || []);

@@ -22,6 +22,19 @@ export const EXERCISES = [
     ],
   },
   {
+    id: 'retail-ransomware', name: 'Ransomware w sieci handlowej (sklepy, centra dystrybucyjne, program lojalnościowy)', plans: ['plan-irp', 'plan-bcp', 'plan-drp'],
+    injects: [
+      [0, 'Piątek 17:20 przed długim weekendem. Kierownicy kilkudziesięciu sklepów zgłaszają, że kasy nie rozpoczynają sprzedaży. Na komputerach na zapleczu widać notatkę z żądaniem okupu.', 'Kto przyjmuje zgłoszenia ze sklepów? Jaki priorytet? Kogo i jakim kanałem powiadamiacie?'],
+      [15, 'SOC widzi szyfrowanie serwerów w centrali i w centrum dystrybucyjnym. WMS jest niedostępny, automatyka magazynu stoi. Agent EDR został wyłączony na części serwerów z konta administratora domeny.', 'Co izolujecie: sklepy, centra dystrybucyjne, centralę, internet? W jakiej kolejności? Kto zatwierdza?'],
+      [30, 'Poczta i komunikator działają, ale jest podejrzenie, że atakujący czytają korespondencję zespołu IT.', 'Jakiego kanału pozapasmowego używacie? Gdzie są aktualne numery telefonów?'],
+      [60, 'Na stronie z wyciekami grupy przestępczej pojawia się wpis z próbką danych członków programu lojalnościowego (imię, e-mail, telefon, historia zakupów).', 'Czy to naruszenie RODO? Jak ustalicie skalę? Kiedy zgłoszenie do UODO i czy zawiadamiacie klientów?'],
+      [120, 'Klienci w mediach społecznościowych zgłaszają, że w części sklepów nie działa płatność kartą. Dzwonią dziennikarze.', 'Czy sklepy pracują dalej, czy są zamykane? Kto zatwierdza komunikat? Czy informujecie agenta rozliczeniowego (PCI DSS)?'],
+      [240, 'Kopie niezmienne sprzed 3 dni są dostępne. Analiza pokazuje jednak pierwsze ślady atakujących w sieci sprzed 12 dni.', 'Który punkt odtworzenia wybieracie? Jak sprawdzicie, że kopia jest czysta? Co odtwarzacie najpierw?'],
+      [480, 'Przestępcy obniżają żądanie i dają 72 h. Ubezpieczyciel cyber prosi o informację o stanie sprawy.', 'Kto decyduje o okupie? Jak sprawdzacie sankcje? Czy zgłoszono sprawę policji (CBZC)?'],
+      [1440, 'Mija doba. Część sklepów sprzedaje w trybie offline, zapasy na półkach wystarczą na 3–4 dni, dostawy stoją.', 'Jakie są priorytety odtworzenia? Jak uruchamiacie dostawy awaryjne? Czy terminy zgłoszeń zostały dotrzymane?'],
+    ],
+  },
+  {
     id: 'dc-outage', name: 'Utrata podstawowego centrum danych', plans: ['plan-drp', 'plan-bcp'],
     injects: [
       [0, 'Wt. 14:05. Pożar w budynku serwerowni. Straż pożarna odcina zasilanie. Wszystkie systemy w ośrodku podstawowym niedostępne.', 'Kto decyduje o przełączeniu? Jakie kryteria?'],

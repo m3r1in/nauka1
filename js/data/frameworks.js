@@ -96,6 +96,19 @@ export const FRAMEWORKS = [
     ],
   },
   {
+    id: 'pci', name: 'PCI DSS v4.0.1', kind: 'standard',
+    title: 'Bezpieczeństwo danych kart płatniczych – reagowanie na incydenty',
+    reqs: [
+      ['12.10.1', 'Plan reagowania na incydenty gotowy do natychmiastowej aktywacji'],
+      ['12.10.2', 'Przegląd i test planu co najmniej raz w roku', 'test'],
+      ['12.10.3', 'Wyznaczony personel dostępny 24/7'],
+      ['12.10.4', 'Szkolenie personelu reagującego na incydenty'],
+      ['12.10.5', 'Reagowanie na alerty systemów monitorowania bezpieczeństwa'],
+      ['12.10.6', 'Aktualizacja planu na podstawie wniosków i zmian w branży'],
+      ['10.7.2', 'Wykrywanie awarii krytycznych zabezpieczeń i reagowanie na nie'],
+    ],
+  },
+  {
     id: 'nis2', name: 'NIS2 – dyrektywa (UE) 2022/2555', kind: 'law',
     title: 'Środki zarządzania ryzykiem w cyberbezpieczeństwie i obowiązki raportowe',
     reqs: [

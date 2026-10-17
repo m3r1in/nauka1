@@ -1,10 +1,11 @@
 // Service worker: pliki aplikacji z pamięci podręcznej (offline), czcionki – na bieżąco z kopią zapasową.
-const VERSION = 'bcm-studio-v1';
+const VERSION = 'bcm-studio-v2';
 const ASSETS = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'js/app.js', 'js/logic.js',
   'js/data/frameworks.js', 'js/data/templates.js', 'js/data/technologies.js', 'js/data/exercises.js', 'js/data/sample.js',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png',
+  'examples/rossmann-ransomware.json',
 ];
 
 self.addEventListener('install', e => {

@@ -19,9 +19,17 @@ Działa w przeglądarce, także na telefonie i bez internetu. Nie wymaga serwera
 
 ### Ramy odniesienia
 
-ISO 22301, ISO/IEC 27001:2022 (zał. A), ISO/IEC 27031, ISO/IEC 27035, NIST SP 800-34, NIST SP 800-61r3 / CSF 2.0, NIS2, ustawa o KSC, DORA, RODO.
+ISO 22301, ISO/IEC 27001:2022 (zał. A), ISO/IEC 27031, ISO/IEC 27035, NIST SP 800-34, NIST SP 800-61r3 / CSF 2.0, PCI DSS v4.0.1, NIS2, ustawa o KSC, DORA, RODO.
 
 Opisy wymagań są parafrazami, a nie cytatami norm. Terminy raportowe są uproszczone. Treść jest punktem startowym i wymaga weryfikacji z aktualnymi przepisami (w szczególności ustawą o KSC po nowelizacji wdrażającej NIS2) oraz dokumentacją używanych produktów.
+
+## Gotowe projekty
+
+| Projekt | Pliki |
+|---|---|
+| Rossmann Polska – plan na wypadek ataku ransomware (OSINT + założenia) | [`examples/rossmann/README.md`](examples/rossmann/README.md) – kontekst, luki, testy, źródła · [`examples/rossmann/dokumentacja.md`](examples/rossmann/dokumentacja.md) – pełna dokumentacja · `examples/rossmann-ransomware.json` – import do aplikacji |
+
+W aplikacji: **Ustawienia → Gotowe projekty → Wczytaj**. Projekt odtworzysz skryptem `node tools/build-rossmann.mjs`.
 
 ## Uruchomienie
 
