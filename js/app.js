@@ -12,8 +12,10 @@ import {
 const KEY = 'bcm-studio.v1';
 // W osadzonym podglądzie pobieranie i drukowanie są zablokowane – eksport idzie przez okno do skopiowania.
 const inFrame = window.BCM_EMBED === true || (() => { try { return window.self !== window.top; } catch { return true; } })();
-let S = load() || sampleState();
-persist();
+// window.BCM_PRELOAD: projekt wczytywany przy pierwszym uruchomieniu zamiast danych przykładowych (osadzone podglądy).
+const stored = load();
+let S = stored || sampleState();
+if (stored || !window.BCM_PRELOAD) persist();
 
 function load() { try { const r = localStorage.getItem(KEY); return r ? JSON.parse(r) : null; } catch { return null; } }
 function persist() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* brak dostępu do pamięci */ } }
@@ -872,4 +874,14 @@ if ('serviceWorker' in navigator && !inFrame && location.protocol !== 'file:') {
   navigator.serviceWorker.register('sw.js').catch(() => { /* tryb bez pracy offline */ });
 }
 
-render();
+async function boot() {
+  if (!stored && window.BCM_PRELOAD) {
+    try {
+      const r = await fetch(window.BCM_PRELOAD, { cache: 'no-cache' });
+      if (r.ok) S = { ...emptyState(), ...(await r.json()) };
+    } catch { /* zostają dane przykładowe */ }
+    persist();
+  }
+  render();
+}
+boot();
