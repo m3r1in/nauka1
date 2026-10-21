@@ -1,10 +1,10 @@
 # Rossmann Polska – plan na wypadek ataku ransomware
 
-Projekt z 2026-10-17. Przygotowany na podstawie źródeł publicznych w BCM Studio. Do importu: `examples/rossmann-ransomware.json` (Ustawienia → Gotowe projekty).
+Projekt z 2026-10-21. Przygotowany na podstawie źródeł publicznych w BCM Studio. Do importu: `examples/rossmann-ransomware.json` (Ustawienia → Gotowe projekty).
 
 ## Kontekst organizacji (OSINT) i założenia
 
-FAKTY (źródła publiczne, stan na 2026-10-17, do weryfikacji w KRS i sprawozdaniach):
+FAKTY (źródła publiczne, stan na 2026-10-21, do weryfikacji w KRS i sprawozdaniach):
 - Podmiot: Rossmann Supermarkety Drogeryjne Polska Sp. z o.o. (nazwę i dane rejestrowe potwierdź w KRS); centrala w Łodzi.
 - Sieć: ok. 1925 drogerii w 709 miejscowościach na koniec 2024 r.; próg 2000 drogerii przekroczony w październiku 2025 r.
 - Skala: sprzedaż netto 2024 ok. 15,0 mld zł (inne źródła podają 17,9 mld zł – różne miary), zysk netto ok. 1,47 mld zł; zatrudnienie rzędu kilkunastu tysięcy osób (2023: ok. 17,1 tys.).
@@ -33,96 +33,51 @@ ZAŁOŻENIA (do potwierdzenia):
 
 Najważniejszy wniosek: kasy, sklep internetowy i WMS zależą od tożsamości (AD/Entra ID), której odtworzenie po ransomware trwa realnie 1–3 doby. Trzeba potwierdzić, czy kasy pracują offline niezależnie od AD i centrali, oraz skrócić czas odtworzenia tożsamości (gotowy plan odtworzenia lasu AD, izolowane kopie, ćwiczenia).
 
-## Dokumenty
+## Macierz dokumentów
 
-- Polityka zarządzania ciągłością działania
-- Polityka zarządzania incydentami bezpieczeństwa
-- Polityka kopii zapasowych i odtwarzania
-- Plan ciągłości działania (BCP)
-- Plan odtwarzania po awarii (DRP)
-- Plan reagowania na incydenty (IRP)
-- Plan komunikacji kryzysowej
--   Procedura eskalacji i aktywacji planu
--   Procedura odtworzenia systemu
--   Procedura przełączenia do ośrodka zapasowego
--   Procedura obsługi i zgłaszania incydentu
--   Procedura obsługi naruszenia ochrony danych osobowych
--   Procedura testowania i ćwiczeń
--   Procedura przeglądu poincydentalnego
--     Instrukcja powiadamiania (drzewo telefoniczne)
--     Tryb awaryjny – Sprzedaż w drogeriach
--     Tryb awaryjny – Zaopatrzenie drogerii z centrów dystrybucyjnych
--     Tryb awaryjny – Zakupy i zarządzanie zapasami
--     Tryb awaryjny – Sprzedaż internetowa i click & collect
--     Tryb awaryjny – Finanse i płatności do dostawców
--     Tryb awaryjny – Komunikacja kryzysowa i obsługa klienta
--     Odtworzenie – Tożsamość: Active Directory i Entra ID · Active Directory (Windows Server)
--     Izolacja i dowody – Tożsamość: Active Directory i Entra ID · Active Directory (Windows Server)
--     Odtworzenie – Tożsamość: Active Directory i Entra ID · Microsoft 365 / Entra ID
--     Izolacja i dowody – Tożsamość: Active Directory i Entra ID · Microsoft 365 / Entra ID
--     Odtworzenie – Sieć WAN drogerii i centrów dystrybucyjnych (SD-WAN, zapory) · Zapora FortiGate
--     Izolacja i dowody – Sieć WAN drogerii i centrów dystrybucyjnych (SD-WAN, zapory) · Zapora FortiGate
--     Odtworzenie – System kasowy drogerii (ok. 2000 placówek, kasy samoobsługowe) · Kasy POS i terminale płatnicze (sklep)
--     Izolacja i dowody – System kasowy drogerii (ok. 2000 placówek, kasy samoobsługowe) · Kasy POS i terminale płatnicze (sklep)
--     Odtworzenie – System kasowy drogerii (ok. 2000 placówek, kasy samoobsługowe) · Microsoft Defender for Endpoint
--     Izolacja i dowody – System kasowy drogerii (ok. 2000 placówek, kasy samoobsługowe) · Microsoft Defender for Endpoint
--     Odtworzenie – ERP: towar, ceny, zakupy, finanse · VMware vSphere / SRM
--     Izolacja i dowody – ERP: towar, ceny, zakupy, finanse · VMware vSphere / SRM
--     Odtworzenie – ERP: towar, ceny, zakupy, finanse · Microsoft SQL Server
--     Odtworzenie – ERP: towar, ceny, zakupy, finanse · Veeam Backup & Replication
--     Odtworzenie – WMS i sterowanie automatyką centrów dystrybucyjnych · VMware vSphere / SRM
--     Izolacja i dowody – WMS i sterowanie automatyką centrów dystrybucyjnych · VMware vSphere / SRM
--     Odtworzenie – WMS i sterowanie automatyką centrów dystrybucyjnych · Microsoft SQL Server
--     Odtworzenie – WMS i sterowanie automatyką centrów dystrybucyjnych · Veeam Backup & Replication
--     Odtworzenie – EDI / B2B z dostawcami · Serwer Linux (RHEL / Ubuntu)
--     Izolacja i dowody – EDI / B2B z dostawcami · Serwer Linux (RHEL / Ubuntu)
--     Odtworzenie – Sklep rossmann.pl i aplikacja Rossmann PL (w tym Rossmann GO) · Kubernetes (Velero)
--     Izolacja i dowody – Sklep rossmann.pl i aplikacja Rossmann PL (w tym Rossmann GO) · Kubernetes (Velero)
--     Odtworzenie – Sklep rossmann.pl i aplikacja Rossmann PL (w tym Rossmann GO) · PostgreSQL
--     Odtworzenie – Program lojalnościowy Klub Rossmanna (CRM, dane klientów) · PostgreSQL
--     Odtworzenie – Microsoft 365: poczta i Teams · Microsoft 365 / Entra ID
--     Izolacja i dowody – Microsoft 365: poczta i Teams · Microsoft 365 / Entra ID
--     Odtworzenie – Platforma kopii zapasowych (kopie niezmienne, odizolowane) · Veeam Backup & Replication
--     Odtworzenie – Platforma kopii zapasowych (kopie niezmienne, odizolowane) · Serwer Linux (RHEL / Ubuntu)
--     Izolacja i dowody – Platforma kopii zapasowych (kopie niezmienne, odizolowane) · Serwer Linux (RHEL / Ubuntu)
--     Odtworzenie – Kadry i płace · Microsoft SQL Server
--   Playbook: atak ransomware
--   Procedura decyzyjna – żądanie okupu
--   Procedura odtworzenia po ransomware (czyste środowisko)
--   Procedura pracy drogerii przy niedostępności systemów centralnych
--   Procedura awaryjnej obsługi centrum dystrybucyjnego
--     Checklista: pierwsza godzina – kierownik incydentu
--     Checklista: izolacja sieci i tożsamości (SOC / NOC)
--     Checklista: ocena naruszenia RODO przy kradzieży danych
--     Checklista: komunikacja w pierwszych 24 h
--     Checklista kierownika drogerii: systemy niedostępne
--     Checklista kierownika zmiany centrum dystrybucyjnego
--     Checklista: odtworzenie tożsamości (AD / Entra ID) po ransomware
+| Typ | Nieznany aktor w infrastrukturze | Zaszyfrowany kontroler domeny | Ransomware w kopii zapasowej | Serwer plików / NAS | Serwer aplikacyjny / baza danych | WMS | Stanowisko sprzedażowe / POS |
+|---|---|---|---|---|---|---|---|
+| Polityka | POL-RAN · Polityka ciągłości działania na wypadek ransomware |  |  |  |  |  |  |
+| Plan | PL-INF · Plan reagowania na detekcję nieznanego aktora w infrastrukturze | PL-AD · Plan reagowania na zaszyfrowany kontroler domeny | PL-BKP · Plan reagowania na ransomware w kopii zapasowej | PL-NAS · Plan reagowania na zaszyfrowanie serwera plików lub zasobów NAS | PL-APP · Plan reagowania na zaszyfrowanie serwera aplikacyjnego lub bazy danych | PL-WMS · Plan reagowania na ransomware w systemie WMS | PL-POS · Plan reagowania na ransomware na stanowisku sprzedażowym |
+| Procedura | PR-INF-1 · Ocena i kwalifikacja naruszenia<br>PR-INF-2 · Izolacja zagrożonych zasobów<br>PR-INF-3 · Zabezpieczenie materiału dowodowego<br>PR-INF-4 · Usunięcie zagrożenia i mechanizmów utrzymania dostępu<br>PR-INF-5 · Weryfikacja bezpieczeństwa przed przywróceniem dostępu | PR-AD-1 · Ocena zakresu naruszenia AD<br>PR-AD-2 · Izolacja naruszonych kontrolerów domeny<br>PR-AD-3 · Zabezpieczenie logów i dowodów z AD<br>PR-AD-4 · Odtworzenie usług AD<br>PR-AD-5 · Weryfikacja i dopuszczenie usług domenowych | PR-BKP-1 · Ocena integralności i dostępności kopii zapasowych<br>PR-BKP-2 · Izolacja infrastruktury backupu<br>PR-BKP-3 · Zabezpieczenie niezainfekowanych kopii zapasowych<br>PR-BKP-4 · Odtworzenie działania infrastruktury backupu<br>PR-BKP-5 · Weryfikacja bezpieczeństwa i sprawności backupu | PR-NAS-1 · Ocena zakresu zaszyfrowania danych<br>PR-NAS-2 · Izolacja serwera i udziałów plikowych<br>PR-NAS-3 · Odtworzenie danych i udziałów plikowych<br>PR-NAS-4 · Weryfikacja integralności odtworzonych danych<br>PR-NAS-5 · Przywrócenie dostępu użytkowników do udziałów | PR-APP-1 · Ocena zakresu naruszenia aplikacji lub bazy<br>PR-APP-2 · Izolacja naruszonego serwera lub aplikacji<br>PR-APP-3 · Odtworzenie aplikacji i baz danych<br>PR-APP-4 · Weryfikacja integralności i spójności danych<br>PR-APP-5 · Dopuszczenie aplikacji do produkcji | PR-WMS-1 · Ocena wpływu incydentu na WMS<br>PR-WMS-2 · Izolacja zagrożonych komponentów WMS<br>PR-WMS-3 · Odtworzenie systemu WMS<br>PR-WMS-4 · Weryfikacja integralności danych magazynowych<br>PR-WMS-5 · Dopuszczenie WMS do eksploatacji | PR-POS-1 · Ocena zakresu naruszenia stanowisk POS<br>PR-POS-2 · Izolacja stanowisk POS<br>PR-POS-3 · Odtworzenie stanowisk POS<br>PR-POS-4 · Weryfikacja bezpieczeństwa i działania POS<br>PR-POS-5 · Dopuszczenie POS do eksploatacji |
+| Instrukcja | IN-INF-1.1 · Analiza alertów i ruchu sieciowego<br>IN-INF-2.1 · Izolacja urządzenia w EDR<br>IN-INF-2.2 · Kwarantanna zagrożonego urządzenia w NAC<br>IN-INF-2.3 · Blokowanie podejrzanych kont i sesji<br>IN-INF-2.4 · Weryfikacja skuteczności izolacji<br>IN-INF-3.1 · Zebranie i zabezpieczenie logów SIEM / EDR | IN-AD-2.1 · Izolacja kontrolera domeny<br>IN-AD-2.2 · Ograniczenie dostępu sieciowego dla źródeł ataku z wykorzystaniem NAC<br>IN-AD-4.1 · Odtworzenie usług AD z zatwierdzonej kopii<br>IN-AD-5.1 · Testowanie AD<br>IN-AD-5.2 · Weryfikacja bezpieczeństwa i poprawności działania AD | IN-BKP-1.1 · Weryfikacja integralności kopii zapasowych<br>IN-BKP-2.1 · Ograniczenie dostępu do segmentu infrastruktury backupu w NAC<br>IN-BKP-3.1 · Zabezpieczenie repozytorium kopii zapasowych<br>IN-BKP-4.1 · Odtworzenie serwera backupu<br>IN-BKP-4.2 · Przywrócenie harmonogramów backupu<br>IN-BKP-5.1 · Test odtwarzania z wybranej kopii | IN-NAS-2.1 · Zatrzymanie szkodliwych sesji<br>IN-NAS-2.2 · Izolacja serwera plików lub NAS<br>IN-NAS-2.3 · Ograniczenie dostępu do segmentu serwera plików lub NAS w NAC<br>IN-NAS-3.1 · Odtworzenie udziałów i uprawnień<br>IN-NAS-4.1 · Weryfikacja integralności plików i uprawnień<br>IN-NAS-5.1 · Przywrócenie dostępu do udziałów | IN-APP-2.1 · Izolacja serwera aplikacyjnego<br>IN-APP-2.2 · Ograniczenie dostępu do segmentu serwera aplikacyjnego lub bazy danych w NAC<br>IN-APP-3.1 · Odtworzenie serwera aplikacyjnego<br>IN-APP-3.2 · Odtworzenie bazy danych<br>IN-APP-4.1 · Testy aplikacji i spójności bazy danych<br>IN-APP-5.1 · Przywrócenie ruchu produkcyjnego | IN-WMS-2.1 · Izolacja serwera WMS<br>IN-WMS-2.2 · Kwarantanna zagrożonych urządzeń klienckich WMS w NAC<br>IN-WMS-3.1 · Odtworzenie serwera i usług WMS<br>IN-WMS-3.2 · Odtworzenie bazy danych WMS<br>IN-WMS-4.1 · Testy integracji WMS z innymi systemami<br>IN-WMS-5.1 · Przywrócenie integracji WMS | IN-POS-2.1 · Izolacja terminala POS w EDR<br>IN-POS-2.2 · Kwarantanna stanowiska POS w NAC<br>IN-POS-3.1 · Odtworzenie terminala POS<br>IN-POS-3.2 · Przywrócenie konfiguracji POS<br>IN-POS-4.1 · Test połączenia POS z systemami centralnymi<br>IN-POS-5.1 · Przywrócenie połączenia z siecią produkcyjną |
+| Checklista | CL-INF-1 · Ocena i kwalifikacja naruszenia<br>CL-INF-2 · Izolacja i ograniczenie zagrożenia<br>CL-INF-5.1 · Weryfikacja bezpieczeństwa zasobów<br>CL-INF-5.2 · Zamknięcie technicznej obsługi incydentu | CL-AD-1 · Ocena naruszenia AD<br>CL-AD-4 · Odtworzenie usług AD<br>CL-AD-5.1 · Weryfikacja i odbiór usług domenowych<br>CL-AD-5.2 · Dopuszczenie AD do eksploatacji | CL-BKP-1 · Ocena bezpieczeństwa kopii zapasowych<br>CL-BKP-3 · Zabezpieczenie infrastruktury backupu<br>CL-BKP-4 · Przywrócenie i kontrola backupu<br>CL-BKP-5 · Test odtwarzania kopii | CL-NAS-1 · Ocena zakresu zaszyfrowania<br>CL-NAS-2 · Izolacja serwera i udziałów<br>CL-NAS-4 · Weryfikacja danych i uprawnień<br>CL-NAS-5 · Przywrócenie dostępu do plików | CL-APP-1 · Ocena naruszenia aplikacji i bazy<br>CL-APP-3 · Odtworzenie aplikacji i bazy<br>CL-APP-5 · Dopuszczenie usługi do produkcji | CL-WMS-1 · Ocena wpływu na WMS<br>CL-WMS-3 · Odtworzenie WMS<br>CL-WMS-4 · Testy integracyjne WMS | CL-POS-1 · Ocena naruszenia POS<br>CL-POS-3 · Odtworzenie POS<br>CL-POS-4 · Testy funkcjonalne POS |
 
 ## Program testów
 
 | Data | Test | Rodzaj |
 |---|---|---|
-| 2026-10-31 | Przegląd dokumentacji ransomware z właścicielami procesów | review |
-| 2026-11-07 | Test drzewa powiadomień i kanału pozapasmowego | walk |
-| 2026-11-21 | Ćwiczenie sztabowe: ransomware w sieci drogerii | tabletop |
-| 2026-12-05 | Przejście procedury pracy offline w 3 drogeriach pilotażowych | walk |
-| 2026-12-19 | Odtworzenie AD z kopii niezmiennej w środowisku izolowanym | technical |
-| 2027-01-02 | Test ręcznej obsługi centrum dystrybucyjnego bez WMS | walk |
-| 2027-01-16 | Test odtworzenia sklepu internetowego i aplikacji | technical |
+| 2026-11-04 | Przegląd polityki i planów ransomware z właścicielami procesów | review |
+| 2026-11-18 | Ćwiczenie sztabowe: ransomware w sieci drogerii | tabletop |
+| 2026-11-25 | Test izolacji w EDR i NAC (laboratorium) | technical |
+| 2026-12-09 | Odtworzenie lasu AD z kopii w IRE | technical |
+| 2026-12-16 | Weryfikacja czystości i test odtworzenia kopii | technical |
+| 2026-12-23 | Odtworzenie udziałów plikowych z migawek | technical |
+| 2027-01-06 | Odtworzenie bazy i aplikacji sklepu internetowego | technical |
+| 2027-01-13 | Tryb ręczny centrum dystrybucyjnego i testy integracji WMS | walk |
+| 2027-01-27 | Odtworzenie stanowisk POS w drogeriach pilotażowych | technical |
 
-## Pokrycie wymagań (projekt): 43%
+## Pokrycie wymagań (projekt): 41%
 
-- ISO 22301:2019: 36%
-- ISO/IEC 27001:2022: 50%
+- ISO 22301:2019: 48%
+- ISO/IEC 27001:2022: 45%
+- ISO/IEC 27031: 38%
 - ISO/IEC 27035: 50%
-- NIST SP 800-61 Rev. 3 / CSF 2.0: 50%
-- PCI DSS v4.0.1: 43%
-- NIS2 – dyrektywa (UE) 2022/2555: 36%
+- NIST SP 800-34 Rev. 1: 21%
+- NIST SP 800-61 Rev. 3 / CSF 2.0: 33%
+- PCI DSS v4.0.1: 36%
+- NIST CSF 2.0: 44%
+- NIST SP 800-184: 50%
+- ISO/IEC 27037: 50%
+- NIS2 – dyrektywa (UE) 2022/2555: 29%
 - Ustawa o KSC: 50%
-- RODO – rozporządzenie (UE) 2016/679: 50%
+- RODO – rozporządzenie (UE) 2016/679: 30%
 
 Pokrycie wzrośnie po zatwierdzeniu dokumentów i przeprowadzeniu testów.
+
+## Normy i metodyki
+
+Dokumenty są zgodne z ISO 22301:2019, ISO/IEC 27001:2022 (A.5.24–A.5.30, A.8.7, A.8.13, A.8.15, A.8.16, A.8.20, A.8.22), ISO/IEC 27031, ISO/IEC 27035-1:2023, ISO/IEC 27037, NIST CSF 2.0 (profil ransomware NIST IR 8374), NIST SP 800-61 Rev. 3, NIST SP 800-184, NIST SP 800-34 Rev. 1, CISA #StopRansomware Guide oraz przewodnikiem Microsoft dotyczącym odtwarzania lasu AD. Mapowanie każdego dokumentu na wymagania jest w aplikacji (moduł Zgodność) i na końcu każdego dokumentu.
 
 ## Źródła
 

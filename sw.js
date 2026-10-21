@@ -1,9 +1,9 @@
 // Service worker: pliki aplikacji z pamięci podręcznej (offline), czcionki – na bieżąco z kopią zapasową.
-const VERSION = 'bcm-studio-v2';
+const VERSION = 'bcm-studio-v3';
 const ASSETS = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'js/app.js', 'js/logic.js',
-  'js/data/frameworks.js', 'js/data/templates.js', 'js/data/technologies.js', 'js/data/exercises.js', 'js/data/sample.js',
+  'js/data/frameworks.js', 'js/data/ransomware/index.js', 'js/data/ransomware/helpers.js', 'js/data/ransomware/policy-plans.js', 'js/data/ransomware/inf.js', 'js/data/ransomware/ad.js', 'js/data/ransomware/bkp.js', 'js/data/ransomware/nas.js', 'js/data/ransomware/aplikacje.js', 'js/data/ransomware/wms.js', 'js/data/ransomware/pos.js', 'js/data/templates.js', 'js/data/technologies.js', 'js/data/exercises.js', 'js/data/sample.js',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png',
   'examples/rossmann-ransomware.json',
 ];

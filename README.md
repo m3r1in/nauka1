@@ -14,12 +14,13 @@ Działa w przeglądarce, także na telefonie i bez internetu. Nie wymaga serwera
 | **Instrukcje technologiczne** | biblioteka kroków dla 15 technologii (VMware/SRM, Hyper-V, Veeam, MS SQL, PostgreSQL, Oracle, Active Directory, Microsoft 365/Entra ID, AWS, Azure, Kubernetes/Velero, Linux, Defender for Endpoint, FortiGate, NetApp) i scenariuszy (kopia, odtworzenie, przełączenie, powrót, izolacja, dowody, weryfikacja) |
 | **Testy i ćwiczenia** | 6 rodzajów testów (od przeglądu do pełnej symulacji), scenariusze ćwiczeń sztabowych z wstrzyknięciami (ransomware, utrata DC, dostawca chmurowy, przejęcie konta, personel), wykonanie krok po kroku ze stoperem, rzeczywiste RTO/RPO, ustalenia i działania korygujące, raport |
 | **Zgodność** | ocena pokrycia wymagań z dowodami (dokument zatwierdzony + test w 12 mies. / BIA) i podpowiedzią szablonu dla luk |
+| **Pakiet ransomware** | 109 dokumentów w 7 scenariuszach (nieznany aktor, kontroler domeny, kopie zapasowe, serwer plików/NAS, aplikacje i bazy, WMS, POS): polityka, plany, procedury, instrukcje z poleceniami i checklisty, bramki decyzyjne DG0–DG6, widok macierzy; zgodny z ISO 22301, ISO/IEC 27001/27031/27035/27037, NIST CSF 2.0, SP 800-61r3, SP 800-184 |
 | **Zegar raportowy** | terminy zgłoszeń NIS2/KSC (24 h / 72 h / 1 mies.), DORA (4 h od klasyfikacji, maks. 24 h / 72 h / 1 mies.), RODO (72 h) |
 | **Dane** | przechowywane lokalnie w przeglądarce; eksport/import JSON, eksport dokumentów i pakietu do Markdown, druk do PDF |
 
 ### Ramy odniesienia
 
-ISO 22301, ISO/IEC 27001:2022 (zał. A), ISO/IEC 27031, ISO/IEC 27035, NIST SP 800-34, NIST SP 800-61r3 / CSF 2.0, PCI DSS v4.0.1, NIS2, ustawa o KSC, DORA, RODO.
+ISO 22301, ISO/IEC 27001:2022 (zał. A), ISO/IEC 27031, ISO/IEC 27035, NIST SP 800-34, NIST SP 800-61r3 / CSF 2.0, NIST CSF 2.0, NIST SP 800-184, ISO/IEC 27037, PCI DSS v4.0.1, NIS2, ustawa o KSC, DORA, RODO.
 
 Opisy wymagań są parafrazami, a nie cytatami norm. Terminy raportowe są uproszczone. Treść jest punktem startowym i wymaga weryfikacji z aktualnymi przepisami (w szczególności ustawą o KSC po nowelizacji wdrażającej NIS2) oraz dokumentacją używanych produktów.
 

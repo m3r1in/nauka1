@@ -3,6 +3,7 @@ import { TEMPLATES, TEMPLATE_BY_ID, DOC_TYPES, LAYERS } from './data/templates.j
 import { TECHNOLOGIES, TECH_BY_ID, SCENARIOS } from './data/technologies.js';
 import { TEST_TYPES, EXERCISES, EXERCISE_BY_ID } from './data/exercises.js';
 import { sampleState } from './data/sample.js';
+import { addRansomwarePack, COLS, MATRIX_ROWS } from './data/ransomware/index.js';
 import {
   uid, today, emptyState, fmtH, esc, fmtDate, fmtDT, byId, children, descendants, ancestors,
   systemRequirements, gaps, recoveryOrder, compliance, activeRegimes, deadlines, stepsFromTech, createDoc,
@@ -284,15 +285,33 @@ function docsTree() {
   const walk = (d, depth) => { if (visible(d)) rows.push([d, depth]); children(S, d.id).forEach(c => walk(c, visible(d) ? depth + 1 : depth)); };
   roots.forEach(r => walk(r, 0));
   const tabs = [['', 'Wszystkie'], ['biz', 'Biznesowe'], ['tech', 'Techniczne']];
+  const hasMatrix = S.documents.some(d => d.col);
+  const view = q.get('view') || (hasMatrix ? 'matrix' : 'tree');
   return page('Dokumentacja', 'Od polityk do instrukcji',
-    `<button class="btn" data-act="bundle">${icon('down')}Eksport pakietu</button><button class="btn" data-act="gen">Uzupełnij strukturę</button><a class="btn primary" href="#/docs/new">${icon('plus')}Nowy dokument</a>`,
+    `<button class="btn" data-act="bundle">${icon('down')}Eksport pakietu</button><button class="btn" data-act="pack-ransomware">${icon('shield')}Pakiet ransomware</button><button class="btn" data-act="gen">Uzupełnij strukturę</button><a class="btn primary" href="#/docs/new">${icon('plus')}Nowy dokument</a>`,
     `${sampleBanner()}
+    ${hasMatrix ? `<div class="seg" role="tablist">${[['matrix', 'Macierz scenariuszy'], ['tree', 'Drzewo dokumentów']].map(([v, l]) => `<button role="tab" class="${view === v ? 'on ok' : ''}" data-act="docs-view" data-v="${v}" aria-selected="${view === v}">${l}</button>`).join('')}</div>` : ''}
+    ${view === 'matrix' && hasMatrix ? docsMatrix() : `
     <div class="row" style="justify-content:space-between">
       <div class="seg" role="tablist">${tabs.map(([v, l]) => `<button role="tab" class="${layer === v ? 'on ok' : ''}" data-act="filter-layer" data-v="${v}" aria-selected="${layer === v}">${l}</button>`).join('')}</div>
       <div class="legend"><span>${layerDot('biz')}biznesowa</span><span>${layerDot('tech')}techniczna</span><span>${layerDot('both')}obie</span><span><span class="type">POL</span>→<span class="type">INS</span> poziom</span></div>
     </div>
     ${rows.length ? `<div class="tree">${rows.map(([d, depth]) => `<a class="node" href="#/doc/${d.id}" style="--d:${depth}" data-level="${DOC_TYPES[d.type].level}">${typeBadge(d.type)}${layerDot(d.layer)}<span class="t">${h(d.title)}</span>${statusPill(d.status)}</a>`).join('')}</div>`
-      : `<div class="card empty"><p>Brak dokumentów. Generator zbuduje politykę, plany BCP/DRP/IRP, procedury i instrukcje dla Twoich procesów i technologii.</p><button class="btn primary" data-act="gen">Zbuduj strukturę dokumentów</button></div>`}`);
+      : `<div class="card empty"><p>Brak dokumentów. Generator zbuduje politykę, plany BCP/DRP/IRP, procedury i instrukcje dla Twoich procesów i technologii.</p><button class="btn primary" data-act="gen">Zbuduj strukturę dokumentów</button></div>`}`}`);
+}
+
+// Macierz pakietu ransomware: wiersze = rodzaj dokumentu, kolumny = scenariusz (jak w tabeli źródłowej).
+function docsMatrix() {
+  const docs = S.documents.filter(d => d.col || d.genKey === 'rp:POL');
+  const kind = d => d.kind || d.type;
+  const cell = list => list.length ? list.sort((a, b) => a.title.localeCompare(b.title, 'pl', { numeric: true })).map(d => `<a class="mx-doc ${d.status}" href="#/doc/${d.id}"><span class="mono">${h(d.code || '')}</span>${h(d.title.replace(/^\S+ · /, ''))}</a>`).join('') : '<span class="muted small">–</span>';
+  const pol = docs.filter(d => d.type === 'policy');
+  const counts = MATRIX_ROWS.map(([k, l]) => `${docs.filter(d => kind(d) === k).length} ${l.toLowerCase()}`).join(' · ');
+  return `<p class="small muted" style="margin:0">${counts}. Kliknij dokument, aby go otworzyć. Kolor obramowania: szary – projekt, zielony – zatwierdzony.</p>
+    <div class="tbl mx"><table><thead><tr><th>Typ dokumentu</th>${Object.values(COLS).map(c => `<th>${h(c.name)}</th>`).join('')}</tr></thead><tbody>
+    <tr><th>Polityka</th><td colspan="${Object.keys(COLS).length}">${cell(pol)}</td></tr>
+    ${MATRIX_ROWS.slice(1).map(([k, l]) => `<tr><th>${l}</th>${Object.keys(COLS).map(c => `<td>${cell(docs.filter(d => d.col === c && kind(d) === k))}</td>`).join('')}</tr>`).join('')}
+    </tbody></table></div>`;
 }
 
 function docNew() {
@@ -761,6 +780,12 @@ const ACTIONS = {
     if (what === 'test') { S.tests = S.tests.filter(x => x.id !== id); location.hash = '#/tests'; }
     persist(); toast('Usunięto');
   },
+  'pack-ransomware'() {
+    const made = addRansomwarePack(S); persist();
+    toast(made.length ? `Dodano ${made.length} dokumentów pakietu ransomware` : 'Pakiet ransomware jest już kompletny');
+    if (location.hash.split('?')[0] !== '#/docs') location.hash = '#/docs?view=matrix'; else render();
+  },
+  'docs-view'(el) { location.hash = '#/docs?view=' + el.dataset.v; },
   'filter-layer'(el) { location.hash = '#/docs' + (el.dataset.v ? `?layer=${el.dataset.v}` : ''); },
   'add-sec'(el) { byId(S.documents, el.dataset.id).sections.push({ id: uid(), title: 'Nowa sekcja', content: '', hint: '' }); persist(); render(); },
   'add-step'(el) { byId(S.documents, el.dataset.id).steps.push({ id: uid(), group: '', who: '', action: '', cmd: '', expected: '' }); persist(); render(); },
