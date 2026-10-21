@@ -14,7 +14,9 @@ const KEY = 'bcm-studio.v1';
 // W osadzonym podglądzie pobieranie i drukowanie są zablokowane – eksport idzie przez okno do skopiowania.
 const inFrame = window.BCM_EMBED === true || (() => { try { return window.self !== window.top; } catch { return true; } })();
 // window.BCM_PRELOAD: projekt wczytywany przy pierwszym uruchomieniu zamiast danych przykładowych (osadzone podglądy).
-const stored = load();
+// Nowa wersja projektu (inny adres BCM_PRELOAD) zastępuje dane zapisane z poprzedniej wersji.
+const loaded = load();
+const stored = loaded && window.BCM_PRELOAD && loaded.preloadFrom !== window.BCM_PRELOAD ? null : loaded;
 let S = stored || sampleState();
 if (stored || !window.BCM_PRELOAD) persist();
 
@@ -903,7 +905,7 @@ async function boot() {
   if (!stored && window.BCM_PRELOAD) {
     try {
       const r = await fetch(window.BCM_PRELOAD, { cache: 'no-cache' });
-      if (r.ok) S = { ...emptyState(), ...(await r.json()) };
+      if (r.ok) S = { ...emptyState(), ...(await r.json()), preloadFrom: window.BCM_PRELOAD };
     } catch { /* zostają dane przykładowe */ }
     persist();
   }
